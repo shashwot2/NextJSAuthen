@@ -4,10 +4,26 @@ export const GET = async (request: Request) => {
     const cookieHeader = request.headers.get('cookie')
     
     if (!cookieHeader) {
-        return new Response('Token not found', { status: 400 })
+        return new Response(JSON.stringify({ message: 'No cookies found' }), { 
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        })
     }
     
-    const token = cookieHeader.slice(6)
+    const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
+        const [key, value] = cookie.trim().split('=');
+        acc[key] = value;
+        return acc;
+    }, {});
+    
+    const token = cookies.token;
+    
+    if (!token) {
+        return new Response(JSON.stringify({ message: 'Token not found' }), { 
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        })
+    }
     
     try {
         const decoded = jwt.verify(token, process.env.JWTSECRET!) as any
@@ -19,6 +35,9 @@ export const GET = async (request: Request) => {
             headers: { 'Content-Type': 'application/json' }
         })
     } catch (error) {
-        return new Response('Invalid token', { status: 401 })
+        return new Response(JSON.stringify({ message: 'Invalid token' }), { 
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        })
     }
 }
