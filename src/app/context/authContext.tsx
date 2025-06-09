@@ -26,6 +26,7 @@ const AuthProvider = ({ children }) => {
             if (response.ok) {
                 const userData = await response.json();
                 setUser(userData);
+                return userData
             }
         } catch (error) {
             console.error('Auth check failed:', error);
