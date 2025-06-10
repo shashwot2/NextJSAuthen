@@ -4,7 +4,6 @@ import { useAuth } from '../context/authContext'
 import { useRouter } from 'next/navigation'
 
 const profile = () => {
-    const [authorized, setIsAuthorized] = useState(false)
     const { checkAuth } = useAuth()
     const router = useRouter()
      useEffect(() => {
@@ -13,12 +12,9 @@ const profile = () => {
                 const response = await checkAuth()
                 console.log("respones", response)
                 if (!response){
-                    setIsAuthorized(false)
                     router.push("/")
                 }
-                setIsAuthorized(true)
             } catch (error) {
-                setIsAuthorized(false)
                     router.push("/")
         }
     }
